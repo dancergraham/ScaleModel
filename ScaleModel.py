@@ -9,69 +9,74 @@ from __future__ import print_function, division
 
 import rhinoscriptsyntax as rs
 
-def Scale():
-    # get current state and scale from DocumentData, if present or from user, if not
-    print(rs.GetDocumentData("CSTB", "echelle"))
-    print(rs.GetDocumentData("CSTB", "etat"))
 
-    if rs.GetDocumentData("CSTB", "echelle") and rs.GetDocumentData("CSTB", "etat"):
-        echelle = float(rs.GetDocumentData("CSTB", "echelle"))
-        oldechelle = echelle
-        etat = rs.GetDocumentData("CSTB", "etat")
-        oldetat = etat
+def rescale():
+    # get current state and scale from DocumentData, if present or from user, if not
+    print("Current Scale: 1:", rs.GetDocumentData("ScaleModel", "scale"))
+    print("Current State: ", rs.GetDocumentData("ScaleModel", "state"))
+
+    if rs.GetDocumentData("ScaleModel", "scale") and rs.GetDocumentData("ScaleModel", "state"):
+        scale = float(rs.GetDocumentData("ScaleModel", "scale"))
+        oldechelle = scale
+        state = rs.GetDocumentData("ScaleModel", "state")
+        oldetat = state
     else:
-        etat = ""
-        etat = rs.ListBox(("Vrai Grandeur", "Modele"),
-                          "Actuellement a quelle echelle ?", "mise a echelle", etat)
-        if etat == None:  # cancelled
+        state = ""
+        state = rs.ListBox(items=("Full-Scale", "Model Scale"),
+                           message="Currently at what scale ?",
+                           title="Scale Model",
+                           default=state)
+        if state == None:  # cancelled
             return
-        oldetat = etat
-        if etat == "Modele":
-            echelle = 250.
-            echelle = rs.GetReal("Échelle actuelle 1:", echelle, 0)
-            oldechelle = echelle
-            if echelle == None:  # cancelled
+        oldetat = state
+        if state == "Model Scale":
+            scale = 250.
+            scale = rs.GetReal("Current Scale 1:", scale, 0)
+            oldechelle = scale
+            if scale == None:  # cancelled
                 return
         else:
-            if etat == "Vrai Grandeur": echelle = 1.
+            if state == "Full-Scale": scale = 1.
     # get desired state and scale
-    etat = rs.ListBox(("Vrai Grandeur", "Modele"),
-                      "A échelle %s. Mettre a quelle echelle ?" % (etat), "Mise à échelle", etat)
-    if etat == None:  # cancelled
+    state = rs.ListBox(("Full-Scale", "Model Scale"),
+                       "Currently %s. Choose new state" % (state), "Rescale", state)
+    if state == None:  # cancelled
         return
 
-    if etat == "Modele":
-        if not echelle: echelle = 250.
-        echelle = rs.GetReal("Nouvelle Echelle 1:", echelle, 0)
-        if echelle == None: return
+    if state == "Model Scale":
+        if not scale: scale = 250.
+        scale = rs.GetReal("New Scale 1:", scale, 0)
+        if scale == None: return
 
-    rs.SetDocumentData("CSTB", "echelle", str(echelle))
-    rs.SetDocumentData("CSTB", "etat", etat)
+    rs.SetDocumentData("ScaleModel", "scale", str(scale))
+    rs.SetDocumentData("ScaleModel", "state", state)
     # scale geometry and dimensions
     dimstyles = rs.DimStyleNames()
 
-    if not oldetat == etat:
-        if etat == "Vrai Grandeur":
+    if not oldetat == state:
+        if state == "Full-Scale":
             rs.ScaleObjects(rs.AllObjects(), [0, 0, 0],
-                            [(echelle), (echelle), (echelle)])
+                            [(scale), (scale), (scale)])
             for dimstyle in dimstyles:
-                rs.Command('_-ScaleDimstyle "' + dimstyle + '" ' + str(echelle))
+                rs.Command('_-ScaleDimstyle "' + dimstyle + '" ' + str(scale))
 
         else:
             rs.ScaleObjects(rs.AllObjects(), [0, 0, 0],
-                            [(1 / echelle), (1 / echelle), (1 / echelle)])
+                            [(1 / scale), (1 / scale), (1 / scale)])
             for dimstyle in dimstyles:
-                rs.Command('_-ScaleDimstyle "' + dimstyle + '" ' + str(1 / echelle))
+                rs.Command('_-ScaleDimstyle "' + dimstyle + '" ' + str(1 / scale))
 
     else:
-        if etat == "Modele":
+        if state == "Model Scale":
             rs.ScaleObjects(rs.AllObjects(), [0, 0, 0], \
-                            [(oldechelle / echelle), (oldechelle / echelle), (oldechelle / echelle)])
+                            [(oldechelle / scale), (oldechelle / scale), (oldechelle / scale)])
             for dimstyle in dimstyles:
-                rs.Command('_-ScaleDimstyle "' + dimstyle + '" ' + str(oldechelle / echelle))
+                rs.Command('_-ScaleDimstyle "' + dimstyle + '" ' + str(oldechelle / scale))
+    print("New Scale: 1:", rs.GetDocumentData("ScaleModel", "scale"))
+    print("New State: ", rs.GetDocumentData("ScaleModel", "state"))
 
     rs.ZoomExtents(all=True)
 
 
 if __name__ == "__main__":
-    Scale()
+    rescale()
