@@ -4,7 +4,7 @@
  2019-01-18
  IronPython script for Rhino
 """
-# Todo: error handling, permit undu
+# Todo: error handling, permit undo
 from __future__ import print_function, division
 
 import rhinoscriptsyntax as rs
