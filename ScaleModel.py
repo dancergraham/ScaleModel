@@ -53,6 +53,8 @@ def rescale():
     # scale geometry and dimensions
     dimstyles = rs.DimStyleNames()
 
+    rs.EnableRedraw(False)
+
     if not oldetat == state:
         if state == "Full-Scale":
             rs.ScaleObjects(rs.AllObjects(), [0, 0, 0],
@@ -74,6 +76,7 @@ def rescale():
                 rs.Command('_-ScaleDimstyle "' + dimstyle + '" ' + str(oldechelle / scale))
     print("New Scale: 1:", rs.GetDocumentData("ScaleModel", "scale"))
     print("New State: ", rs.GetDocumentData("ScaleModel", "state"))
+    rs.EnableRedraw(True)
 
     rs.ZoomExtents(all=True)
 

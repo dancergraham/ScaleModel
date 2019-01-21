@@ -5,7 +5,7 @@ Ironpython 2.7
 Tested under Mcneel Rhino version 5 for windows
 Hello all,
 I have written a python script to help when working with scale models, specifically it helps when switching regularly between full-scale and model scale. You can download it here : [ModelScale.py](https://raw.githubusercontent.com/dancergraham/ScaleModel/master/ScaleModel.py)
-I would be grateful for any comments, feedback, feature requests (but I make no promises :slight_smile:  ) or any examples of similar (better ?!?) scripts.
+I would be grateful for any comments, feedback, feature requests (but I make no promises) or any examples of similar (better ?!?) scripts.
 ## Features
 * Remembers the model scale, e.g. 1:200
 * Permits easy switching between full and model scale
