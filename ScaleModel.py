@@ -1,8 +1,9 @@
 # coding: utf-8
-""" Rescale a model between full scale and model scale
+""" Rescale a Rhino model between full scale and model scale
+
  Graham Knapp
- 2019-04-16
- IronPython script for Rhino
+ 2019-08-30
+ IronPython script for Rhino v5
 """
 # Todo: error handling
 from __future__ import print_function, division, absolute_import
@@ -10,11 +11,11 @@ from __future__ import print_function, division, absolute_import
 import rhinoscriptsyntax as rs
 import scriptcontext as sc
 
-def undo_usertext(sender, e):
-    '''custom undo event - may be removed if bug in Rhino is fixed'''
+def __undo_usertext(sender, e):
+    """custom undo event - may be removed if bug in Rhino is fixed"""
     actuel = (rs.GetDocumentData("ScaleModel", "scale"),
                 rs.GetDocumentData("ScaleModel", "state"))
-    e.Document.AddCustomUndoEvent("Undo ScaleModel", undo_usertext, actuel)
+    e.Document.AddCustomUndoEvent("Undo ScaleModel", __undo_usertext, actuel)
     old = e.Tag
     print(old)
     print ("returning to %s scale" % (old[1]))
@@ -48,7 +49,8 @@ def rescale():
             if scale is None:  # cancelled
                 return
         else:
-            if state == "Full-Scale": scale = 1.
+            if state == "Full-Scale":
+                scale = 1.
     previous_params = (str(scale), state)
     # get desired state and scale
     state = rs.ListBox(("Full-Scale", "Model Scale"),
@@ -88,7 +90,7 @@ def rescale():
                             [(oldechelle / scale), (oldechelle / scale), (oldechelle / scale)])
             for dimstyle in dimstyles:
                 rs.Command('_-ScaleDimstyle "' + dimstyle + '" ' + str(oldechelle / scale))
-    sc.doc.AddCustomUndoEvent("Undo ScaleModel", undo_usertext, previous_params)
+    sc.doc.AddCustomUndoEvent("Undo ScaleModel", __undo_usertext, previous_params)
     print("New Scale: 1:", rs.GetDocumentData("ScaleModel", "scale"))
     print("New State: ", rs.GetDocumentData("ScaleModel", "state"))
     rs.EnableRedraw(True)
