@@ -15,9 +15,6 @@ I would be grateful for any comments, feedback, feature requests (but I make no 
 * Permits easy switching between full and model scale
 * Permits changes to model scale
 
-## Known issues
-~~* Can enter the wrong state on undo (e.g. thinks it is still in model scale)~~
-
 ## Installation
 Follow the instructions [here](https://developer.rhino3d.com/guides/rhinopython/python-running-scripts/)
 
